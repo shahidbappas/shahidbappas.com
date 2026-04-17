@@ -136,22 +136,25 @@
                 <p>Feel free to reach out for collaborations or just a friendly chat about design!</p>
             </div>
             <form class="contact-form" id="contactForm"
-                action="https://script.google.com/macros/s/AKfycbyqMmxdutyFId7fyS1HWokaomhCXcfhwBMs53DPcGuzJO5RuhpRChM-_aVlPY4jMqPy3A/exec"
-                method="POST">
+                action="https://docs.google.com/forms/d/e/1FAIpQLSejt8AySpVI8rRgjTrpUR91qQwFzWlo1Y6V-7bW7ZCOxODfug/formResponse"
+                method="POST"
+                target="hidden_iframe">
                 <div class="form-group">
-                    <input type="text" name="name" placeholder="Your Name" required>
+                    <input type="text" name="entry.466243044" placeholder="Your Name" required>
                 </div>
                 <div class="form-group">
-                    <input type="tel" name="phone" placeholder="Your Phone Number" required>
+                    <input type="tel" name="entry.646082956" placeholder="Your Phone Number" required>
                 </div>
                 <div class="form-group">
-                    <input type="email" name="email" placeholder="Your Email" required>
+                    <input type="email" name="entry.1933855737" placeholder="Your Email" required>
                 </div>
                 <div class="form-group">
-                    <textarea name="message" placeholder="Your Message" required></textarea>
+                    <textarea name="entry.491326636" placeholder="Your Message" required></textarea>
                 </div>
                 <button type="submit" class="btn">Send Message</button>
             </form>
+            <!-- Hidden iframe to catch Google Form redirect silently -->
+            <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
         </div>
     </section>
 

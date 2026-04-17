@@ -91,43 +91,28 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 })();
 
-// Handle form submission silently to avoid Google Form errors
+// Handle Google Form submission via hidden iframe
 const contactForm = document.querySelector('.contact-form');
-if (contactForm) {
-    contactForm.addEventListener('submit', function (e) {
-        e.preventDefault(); // Prevent default submission that causes errors / redirects
-        
-        const nameInput = this.querySelector('input[name="name"]');
+const hiddenIframe = document.getElementById('hidden_iframe');
+
+if (contactForm && hiddenIframe) {
+    // Save name for the success page
+    contactForm.addEventListener('submit', function () {
+        const nameInput = this.querySelector('input[name="entry.466243044"]');
         if (nameInput && nameInput.value) {
             sessionStorage.setItem('submittedName', nameInput.value);
         }
+    });
 
-        const submitButton = this.querySelector('button[type="submit"]');
-        const originalText = submitButton ? submitButton.textContent : 'Send';
-        if (submitButton) {
-            submitButton.disabled = true;
-            submitButton.textContent = 'Sending...';
+    // When Google Form responds (loads into the hidden iframe), redirect to success page
+    hiddenIframe.addEventListener('load', function () {
+        // Ignore the very first load (empty iframe on page load)
+        if (hiddenIframe.dataset.submitted === 'true') {
+            window.location.href = 'success.html';
         }
+    });
 
-        const formData = new FormData(this);
-
-        fetch(this.action, {
-            method: 'POST',
-            body: formData,
-            mode: 'no-cors' // Bypasses CORS and prevents Google Script error page from showing
-        })
-        .then(() => {
-            // Because mode is 'no-cors', the response is opaque, meaning we assume success
-            contactForm.reset();
-            window.location.href = 'success.html'; // Smoothly redirect to your custom success page
-        })
-        .catch(error => {
-            console.error('Submission Error:', error);
-            if (submitButton) {
-                submitButton.disabled = false;
-                submitButton.textContent = originalText;
-            }
-            alert('Something went wrong. Please try again.');
-        });
+    contactForm.addEventListener('submit', function () {
+        hiddenIframe.dataset.submitted = 'true';
     });
 }
