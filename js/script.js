@@ -91,13 +91,43 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 })();
 
-// Preserve name for success page
+// Handle form submission silently to avoid Google Form errors
 const contactForm = document.querySelector('.contact-form');
 if (contactForm) {
-    contactForm.addEventListener('submit', function () {
+    contactForm.addEventListener('submit', function (e) {
+        e.preventDefault(); // Prevent default submission that causes errors / redirects
+        
         const nameInput = this.querySelector('input[name="name"]');
         if (nameInput && nameInput.value) {
             sessionStorage.setItem('submittedName', nameInput.value);
         }
+
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalText = submitButton ? submitButton.textContent : 'Send';
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = 'Sending...';
+        }
+
+        const formData = new FormData(this);
+
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            mode: 'no-cors' // Bypasses CORS and prevents Google Script error page from showing
+        })
+        .then(() => {
+            // Because mode is 'no-cors', the response is opaque, meaning we assume success
+            contactForm.reset();
+            window.location.href = 'success.html'; // Smoothly redirect to your custom success page
+        })
+        .catch(error => {
+            console.error('Submission Error:', error);
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+            }
+            alert('Something went wrong. Please try again.');
+        });
     });
 }
